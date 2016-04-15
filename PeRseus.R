@@ -24,7 +24,7 @@ swEnglish <- FALSE
 swGreek <- FALSE
 swAdditional <- TRUE
 language <- "Latin" # (Greek, Persian, Arabic, Latin)
-requestURN <- "urn:cts:latinLit:phi0448.phi001" 
+requestURN <- "urn:cts:latinLit:phi1056.phi001" 
 capabilities_URL <- "http://www.perseus.tufts.edu/hopper/CTS?request=GetCapabilities"
 baseURL <- "http://www.perseus.tufts.edu/hopper/CTS?request=GetPassage&urn="
 reffURL <- "http://www.perseus.tufts.edu/hopper/CTS?request=GetValidReff&urn="
