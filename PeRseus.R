@@ -255,6 +255,7 @@ author <- unlist(strsplit(authorwork, ".", fixed=TRUE))[1]
 work <- unlist(strsplit(authorwork, ".", fixed=TRUE))[2]
 filename <- paste(work, ".rds", sep="")
 filename_parsed <- paste(work, "_parsed.rds", sep="")
+filename_stem  <- paste(work, "_stems.rds", sep="")
 foldername <- author
 dir.create(foldername)
 pathname <- paste(foldername, "/", filename, sep="")
@@ -334,6 +335,8 @@ corpus_parsed <- temp.corpus
 
 pathname_parsed <- paste(foldername, "/", filename_parsed, sep="")
 saveRDS(corpus_parsed, file = pathname_parsed)
+pathname_stem <- paste(foldername, "/", filename_stem, sep="")
+saveRDS(stem_dictionary, file = pathname_stem)
 
 ### Compare length of corpus and corpus_parsed
 
