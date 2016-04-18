@@ -480,3 +480,12 @@ rownames(theta) <- output_names
 colnames(theta) <- topicnames
 saveRDS(theta, file = pathname_rds)
 write.csv(theta, file = pathname_csv)
+
+## calculate distance between topics and cluster based on it, save viz as PDF
+
+distance <- dist(theta, method = "euclidean")
+fit.distance <- hclust(distance, method = "ward.D")
+pathname_pdf <- paste(tmtables_dir, "/", "/euclideancluster_theta.pdf", sep="")
+pdf(pathname_pdf, width=200, height=15)
+plot(fit.distance)
+dev.off()
