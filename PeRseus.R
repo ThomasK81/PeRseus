@@ -1,6 +1,6 @@
 ## setwd, modify according to your needs
 
-setwd("~/OneDrive/GithubProjects/PeRseus")
+setwd("~/OneDrive/PeRseus")
 
 ## libraries needed
 
@@ -261,10 +261,10 @@ filename_parsed_csv <- paste(work, "_parsed.csv", sep="")
 filename_stem_csv  <- paste(work, "_stems.csv", sep="")
 foldername <- author
 dir.create(foldername)
-pathname <- paste(foldername, "/", filename, sep="")
-saveRDS(corpus, file = pathname)
-pathname <- paste(foldername, "/", filename_csv, sep="")
-write.csv(corpus, file = pathname)
+pathname_rds <- paste(foldername, "/", filename, sep="")
+saveRDS(corpus, file = pathname_rds)
+pathname_csv <- paste(foldername, "/", filename_csv, sep="")
+write.csv(corpus, file = pathname_csv)
 
 ## Build base for topic modelling
 
@@ -338,13 +338,13 @@ temp.corpus[, 2] <- research_corpus
 colnames(temp.corpus) <- c("identifier", "text")
 corpus_parsed <- temp.corpus
 
-pathname_parsed <- paste(foldername, "/", filename_parsed, sep="")
-saveRDS(corpus_parsed, file = pathname_parsed)
-pathname <- paste(foldername, "/", filename_parsed_csv, sep="")
-write.csv(stem_dictionary_CSV, file = pathname)
+pathname_rds <- paste(foldername, "/", filename_parsed, sep="")
+saveRDS(corpus_parsed, file = pathname_rds)
+pathname_csv <- paste(foldername, "/", filename_parsed_csv, sep="")
+write.csv(corpus_parsed, file = pathname_csv)
 
-pathname_stem <- paste(foldername, "/", filename_stem, sep="")
-saveRDS(stem_dictionary, file = pathname_stem)
+pathname_rds <- paste(foldername, "/", filename_stem, sep="")
+saveRDS(stem_dictionary, file = pathname_rds)
 
 ## Produce CSV Stem-Dictionary
 
@@ -353,8 +353,8 @@ stem_dictionary_CSV <- vapply(stem_dictionary,
                               return(result)
                               },
                               character(1))
-pathname <- paste(foldername, "/", filename_stem_csv, sep="")
-write.csv(stem_dictionary_CSV, file = pathname)
+pathname_csv <- paste(foldername, "/", filename_stem_csv, sep="")
+write.csv(stem_dictionary_CSV, file = pathname_csv)
 
 ### Compare length of corpus and corpus_parsed
 
@@ -449,14 +449,34 @@ json <- createJSON(phi = research_corpusAbstracts$phi,
 
 serVis(json, out.dir = tmviz_dir, open.browser = FALSE)
 
-## get the tables
+## reorder phi and theta according to JSON file
 
-pathname_csv <- paste(tmtables_dir, "/", "/theta.rds", sep="")
-pathname_rds <- paste(tmtables_dir, "/", "/theta.csv", sep="")
-saveRDS(theta, file = pathname_rds)
-write.csv(theta, file = pathname_csv)
+new.order <- RJSONIO::fromJSON(json)$topic.order 
+phi <- phi[new.order,]
+theta <- theta[,new.order]
+
+## generate topicnames
+
+phi.t <- t(phi)
+topicnames <- vector(mode="character", length=K)
+for (i in 1:K){
+  topicnames[i] <- paste(rownames(head(phi.t[order(phi.t[,i],decreasing=TRUE),], n=7)), sep="", collapse="_")
+
+}
+
+## get term-topic matrix
 
 pathname_csv <- paste(tmtables_dir, "/", "/phi.rds", sep="")
 pathname_rds <- paste(tmtables_dir, "/", "/phi.csv", sep="")
-saveRDS(phi, file = phipath)
+rownames(phi) <- topicnames
+saveRDS(phi, file = pathname_rds)
 write.csv(phi, file = pathname_csv)
+
+## get document-topic matrix
+
+pathname_csv <- paste(tmtables_dir, "/", "/theta.rds", sep="")
+pathname_rds <- paste(tmtables_dir, "/", "/theta.csv", sep="")
+rownames(theta) <- output_names
+colnames(theta) <- topicnames
+saveRDS(theta, file = pathname_rds)
+write.csv(theta, file = pathname_csv)
