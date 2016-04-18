@@ -1,6 +1,6 @@
 ## setwd, modify according to your needs
 
-setwd("~/OneDrive/PeRseus")
+setwd("~/OneDrive/GithubProjects/PeRseus")
 
 ## libraries needed
 
@@ -254,12 +254,17 @@ authorwork <- tail(unlist(strsplit(requestURN, ":", fixed=TRUE)), n=1)
 author <- unlist(strsplit(authorwork, ".", fixed=TRUE))[1]
 work <- unlist(strsplit(authorwork, ".", fixed=TRUE))[2]
 filename <- paste(work, ".rds", sep="")
+filename_csv <- paste(work, ".csv", sep="")
 filename_parsed <- paste(work, "_parsed.rds", sep="")
 filename_stem  <- paste(work, "_stems.rds", sep="")
+filename_parsed_csv <- paste(work, "_parsed.csv", sep="")
+filename_stem_csv  <- paste(work, "_stems.csv", sep="")
 foldername <- author
 dir.create(foldername)
 pathname <- paste(foldername, "/", filename, sep="")
 saveRDS(corpus, file = pathname)
+pathname <- paste(foldername, "/", filename_csv, sep="")
+write.csv(corpus, file = pathname)
 
 ## Build base for topic modelling
 
@@ -335,8 +340,21 @@ corpus_parsed <- temp.corpus
 
 pathname_parsed <- paste(foldername, "/", filename_parsed, sep="")
 saveRDS(corpus_parsed, file = pathname_parsed)
+pathname <- paste(foldername, "/", filename_parsed_csv, sep="")
+write.csv(stem_dictionary_CSV, file = pathname)
+
 pathname_stem <- paste(foldername, "/", filename_stem, sep="")
 saveRDS(stem_dictionary, file = pathname_stem)
+
+## Produce CSV Stem-Dictionary
+
+stem_dictionary_CSV <- vapply(stem_dictionary, 
+                              function(x){result <- paste(x, collapse = ";")
+                              return(result)
+                              },
+                              character(1))
+pathname <- paste(foldername, "/", filename_stem_csv, sep="")
+write.csv(stem_dictionary_CSV, file = pathname)
 
 ### Compare length of corpus and corpus_parsed
 
@@ -349,6 +367,12 @@ table_corpus_length <- table(test_corpus_length)
 bug_report <- which(test_corpus_length == FALSE)
 failure <- corpus[bug_report,]
 control <- corpus_parsed[bug_report,]
+
+filename_bug  <- paste(work, "_iobugs_", as.character(round(100*length(failure[,1])/length(corpus[,1]))),sep="")
+pathname_csv <- paste(foldername, "/", filename_bug, ".csv", sep="")
+pathname_rds <- paste(foldername, "/", filename_bug, ".rds", sep="")
+saveRDS(failure, file = pathname_rds)
+write.csv(failure, file = pathname_csv)
 
 # Split to word level
 
@@ -427,7 +451,12 @@ serVis(json, out.dir = tmviz_dir, open.browser = FALSE)
 
 ## get the tables
 
-thetapath <- paste(tmtables_dir, "/theta.RDS", sep = "")
-saveRDS(theta, file = thetapath)
-phipath <- paste(tmtables_dir, "/phi.RDS", sep = "")
+pathname_csv <- paste(tmtables_dir, "/", "/theta.rds", sep="")
+pathname_rds <- paste(tmtables_dir, "/", "/theta.csv", sep="")
+saveRDS(theta, file = pathname_rds)
+write.csv(theta, file = pathname_csv)
+
+pathname_csv <- paste(tmtables_dir, "/", "/phi.rds", sep="")
+pathname_rds <- paste(tmtables_dir, "/", "/phi.csv", sep="")
 saveRDS(phi, file = phipath)
+write.csv(phi, file = pathname_csv)
