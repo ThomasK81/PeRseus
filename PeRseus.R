@@ -489,3 +489,5 @@ pathname_pdf <- paste(tmtables_dir, "/", "/euclideancluster_theta.pdf", sep="")
 pdf(pathname_pdf, width=200, height=15)
 plot(fit.distance)
 dev.off()
+
+View(corpus[which(corpus[,1] %in% names(which(cutree(fit.distance, k = 500) == unname(cutree(fit.distance, k = 500)["urn:cts:latinLit:phi1056.phi001.perseus-lat1:7.5.7"])))),])
