@@ -1,6 +1,6 @@
 ## setwd, modify according to your needs
 
-setwd("~/OneDrive/PeRseus")
+setwd("~/OneDrive/GithubProjects/PeRseus")
 
 ## libraries needed
 
