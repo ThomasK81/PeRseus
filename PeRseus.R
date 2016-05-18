@@ -182,10 +182,39 @@ reffs <- reffs[2:length(reffs)]
 reffs <- reffs[seq(1, length(reffs), 2)]
 t2 <- Sys.time()
 time_ref <- t2 - t1
+urls <- paste(baseURL, reffs, sep = "")
 
 ## Fetch Text from CTS Repository
 
+### All of it
 t1 <- Sys.time()
+XMLcorpus <- getURIAsynchronous(urls)
+while(length(which(XMLcorpus == "")) > 0) {
+  print(paste("Fetch rest: ", as.character(length(which(XMLcorpus == ""))), " CTS Units", sep ="")); 
+  XMLcorpus[which(XMLcorpus == "")] <- getURIAsynchronous(urls[which(XMLcorpus == "")])}
+t2 <- Sys.time()
+Time_fetchingAll <- t2 - t1
+Time_fetchingAll
+
+### Batches
+t1 <- Sys.time()
+batch_urls <- split(urls, ceiling(seq_along(urls)/100))
+output_list <- list()
+for (i in 1:length(batch_urls)) {
+  temp_vector <- getURIAsynchronous(batch_urls[[i]])
+  while(length(which(temp_vector == "")) > 0) {
+    print(paste("Fetch rest of batch-request ", as.character(i), "/", as.character(length(batch_urls)), sep="")); 
+    temp_vector[which(temp_vector == "")] <- getURIAsynchronous(batch_urls[[i]][which(temp_vector == "")])}
+  output_list[[i]] <- getURIAsynchronous(batch_urls[[i]])
+  print(paste("Fetched ", as.character(i), "/", as.character(length(batch_urls)), sep=""))
+  }
+XMLcorpus2 <- unlist(output_list)
+t2 <- Sys.time()
+Time_fetchingBatches <- t2 - t1
+Time_fetchingBatches
+
+#########################################################
+
 output_list <- list()
 error_log <- list()
 for (i in reffs) {
@@ -207,7 +236,7 @@ for (i in reffs) {
   )
   message("---------------------------------------")}
 t2 <- Sys.time()
-Time_fetching <- t2 - t1
+Time_fetchingBatches <- t2 - t1
 
 ## Build corpus
 
