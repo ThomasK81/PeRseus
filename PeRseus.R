@@ -25,9 +25,9 @@ swGreek <- FALSE
 swAdditional <- TRUE
 language <- "Latin" # (Greek, Persian, Arabic, Latin)
 requestURN <- "urn:cts:latinLit:phi1056.phi001" 
-capabilities_URL <- "http://www.perseus.tufts.edu/hopper/CTS?request=GetCapabilities"
-baseURL <- "http://www.perseus.tufts.edu/hopper/CTS?request=GetPassage&urn="
-reffURL <- "http://www.perseus.tufts.edu/hopper/CTS?request=GetValidReff&urn="
+capabilities_URL <- "http://cts.perseids.org/api/cts?request=GetCapabilities"
+baseURL <- "http://cts.perseids.org/api/cts?request=GetPassage&urn="
+reffURL <- "http://cts.perseids.org/api/cts?request=GetValidReff&urn="
 morpheusURL <- "https://services.perseids.org/bsp/morphologyservice/analysis/word?word="
 searchterms <- ""
 
@@ -168,6 +168,10 @@ build_test <- function(x){
   test_matrix[,2] <- test_cases
   return(test_matrix)
 }
+
+### Get Capabilities of API
+
+URLcontent <- getURLContent(capabilities_URL, .opts=curlOptions(followlocation=TRUE))
 
 ### Import corpus from CTS repository
 
